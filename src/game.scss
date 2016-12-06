@@ -1,0 +1,23 @@
+@import 'variables';
+@import '../sass/helpers/functions';
+@import '../sass/helpers/mixins';
+@import '../node_modules/normalize-scss/sass/normalize/import-now';
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    background-color: $bgcolor;
+    overflow: hidden;
+}
+
+.container {
+    &--game {
+        border: 1px solid #ccc;
+        @include align-center; 
+    }
+}

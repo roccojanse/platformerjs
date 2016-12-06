@@ -21,6 +21,9 @@ module.exports = function() {
         gulp.src(srcFiles)
             .pipe(gulp.dest(destPath))
             .on('end', done);
+    });
 
+    gulp.task('html:watch', function() {
+        gulp.watch(srcFiles, ['html:copy', 'server:reload']);
     });
 };

@@ -1,3 +1,5 @@
+/* globals GameAssets, GameObjects */
+/* exported Game */
 'use strict';
 
 class Game {
@@ -19,27 +21,59 @@ class Game {
     }
 
     init() {
+
+        // init global asset and object managers
+        window.GameAssets = new GameAssets();
+        window.GameObjects = new GameObjects();
+        
+        // set game scale
         this.setScale();
+
+        window.addEventListener('resize', this.debounce(() => {
+            this.resize();
+        }));
     }
 
     setScale() {
         
-        // get current viewport width
-        let winWidth = window.innerWidth;
+        // get current viewport width and height
+        let winWidth = window.innerWidth,
+            winHeight = window.innerHeight;
 
         // set proportions and scaling
         this._scaleFactor = winWidth / this._defWidth;
+
+        // limit size if exceeds viewport height or viewport width
+        let newWidth = Math.round(this._defWidth * this._scaleFactor),
+            newHeight = Math.round(this._defHeight * this._scaleFactor);
+
+        if (newHeight > winHeight) {
+            this._scaleFactor = winHeight / this._defHeight;
+        }
+        if (newWidth > winWidth) {
+            this._scaleFactor = winWidth / this._defWidth;
+        }
+
+        // set new dimensions
         this._width = Math.round(this._defWidth * this._scaleFactor);
         this._height = Math.round(this._defHeight * this._scaleFactor);
 
         // manipulate game element
-        this._container.style.width = this._width + 'px';
-        this._container.style.height = this._height + 'px';
-
+        this._container.style.width = `${this._width}px`;
+        this._container.style.height = `${this._height}px`;
     }
 
-}
+    debounce(fn, wait = 200) {
+        let timeout;
+        return function () {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, arguments), wait);
+        };
+    }
 
-var Platformer = new Game();
-Platformer.init();
-console.log(Platformer);
+    resize() {
+
+        this.setScale();
+        console.log('RESIZE!');
+    }
+}

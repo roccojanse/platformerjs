@@ -18,5 +18,5 @@ var getAllTasks = function() {
 
 getAllTasks();
 
-gulp.task('default', ['scripts:build', 'html:copy']);
-gulp.task('server', ['server:start']);
+gulp.task('default', ['scripts:build', 'styles:build', 'html:copy']);
+gulp.task('server', ['server:start', 'scripts:watch', 'styles:watch']);

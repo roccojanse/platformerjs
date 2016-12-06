@@ -2,19 +2,13 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
+    gulpUtil = require('gulp-util'),
     del = require('del'),
     sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),
     concat = require('gulp-concat'),
-    jshint = require('gulp-jshint');
-    // rename = require('gulp-rename'),
-    // cache = require('gulp-cached'),
-    // remember = require('gulp-remember'),
-    // sourcemaps = require('gulp-sourcemaps'),
-    // jshint = require('gulp-jshint'),    
-    // concat = require('gulp-concat'),       
-    // uglify = require('gulp-uglify'),      
-    // jsdoc = require('gulp-jsdoc3');
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify');     
 
 module.exports = function() {
 
@@ -40,27 +34,16 @@ module.exports = function() {
                 presets: ['latest'],
                 plugins: ['transform-es2015-template-literals']
             }))
+            .pipe(uglify({ 
+                mangle: false 
+            }).on('error', gulpUtil.log))
             .pipe(concat(fileName + '.js'))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(destPath))
             .on('end', done);
+    });
 
-        // // build
-        // gulp.src(srcGlob)
-        //     .pipe(sourcemaps.init())
-        //     .pipe(cache(cacheName))
-        //     .pipe(jshint())
-        //     .pipe(jshint.reporter('jshint-stylish'))
-        //     .pipe(remember(cacheName))
-        //     .pipe(uglify({ 
-        //         mangle: false 
-        //     }).on('error', gulpUtil.log))
-        //     .pipe(concat(fileName + '.js')
-        //     .on('error', gulpUtil.log))
-        //     .pipe(rename({ 
-        //         suffix: '.min' 
-        //     }))
-        //     .pipe(sourcemaps.write('.'))
-        //     .pipe(gulp.dest(dest));
+    gulp.task('scripts:watch', function() {
+        gulp.watch(srcPath + '/**/*.js', ['scripts:build', 'server:reload']);
     });
 };
