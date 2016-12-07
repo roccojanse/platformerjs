@@ -1,7 +1,7 @@
-/* exported GameAssetManager */
+/* exported AssetManager */
 'use strict';
 
-class GameAssetManager {
+class AssetManager {
 
     constructor() {
 

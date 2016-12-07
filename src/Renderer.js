@@ -1,7 +1,7 @@
-/* exported GameObjectManager */
+/* exported Renderer */
 'use strict';
 
-class GameObjectManager {
+class Renderer {
 
     constructor() {
 
@@ -9,7 +9,7 @@ class GameObjectManager {
 
     }
 
-    clear() {
+    clearObjects() {
         this._objects.clear();
     }
 }

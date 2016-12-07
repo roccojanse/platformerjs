@@ -1,4 +1,3 @@
-/* globals GameAssets, GameObjects */
 /* exported Game */
 'use strict';
 
@@ -14,17 +13,20 @@ class Game {
         this._scaleFactor = 1;
 
         this._fps = 60;
-        this._loopCount = 0;
         this._reqAnimId = null;
-        this._lastFrame = new Date().getTime();
+
+        this._lastFrame = 0;
+        this._upcateCycleCount = 0;
+        this._renderCycleCount = 0;
+        this._physicsCycleCount = 0;
 
     }
 
     init() {
 
         // init global asset and object managers
-        window.GameAssets = new GameAssets();
-        window.GameObjects = new GameObjects();
+        Game.AssetManager = new AssetManager();
+        Game.Renderer = new Renderer();
         
         // set game scale
         this.setScale();
