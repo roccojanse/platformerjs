@@ -29,6 +29,7 @@ class Game {
         // set game scale
         this.setScale();
 
+        // window events
         window.addEventListener('resize', this.debounce(() => {
             this.resize();
         }));

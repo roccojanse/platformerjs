@@ -1,7 +1,7 @@
-/* exported GameObjects */
+/* exported GameObjectManager */
 'use strict';
 
-class GameObjects {
+class GameObjectManager {
 
     constructor() {
 
