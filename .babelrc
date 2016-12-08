@@ -1,0 +1,7 @@
+{
+    "plugins": [],
+    "ignore": [
+        "node_modules/**/*.js",
+        "build/**/*.js",
+    ]
+}

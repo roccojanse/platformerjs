@@ -27,9 +27,10 @@ module.exports = function() {
 
     gulp.task('server:reload', function(done) {
         browserSync.reload();
-        browserSync.emitter.on('reload', function () {
-            done();
+        browserSync.emitter.on('reload', function() {
+            console.log('Server reloaded on ' + new Date().now());
         });
+        done();
     });
 
     gulp.task('server:stop', function(done) {

@@ -9,8 +9,8 @@ let Game = class Game {
         this._container = document.querySelector('#game');
         this._defWidth = 1280;
         this._defHeight = 720;
-        this._width = this.defWidth;
-        this._height = this.defHeight;
+        this._width = this._defWidth;
+        this._height = this._defHeight;
         this._scaleFactor = 1;
 
         this._fps = 60;
@@ -21,6 +21,12 @@ let Game = class Game {
         this._renderCycleCount = 0;
         this._physicsCycleCount = 0;
 
+        this._gameState = {
+            INIT: 1,
+            MAINMENU: 2
+        };
+
+        this.init();
     }
 
     init() {
@@ -28,9 +34,21 @@ let Game = class Game {
         // init global asset and object managers
         Game.AssetManager = new AssetManager();
         Game.Renderer = new Renderer();
-        
+
         // set game scale
+        this._container.width = this._width;
+        this._container.height = this._height;
         this.setScale();
+
+        // tmp
+        let ctx = this._container.getContext('2d');
+        let img = new Image();
+
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, 1280, 720);
+        };
+        img.src = '/assets/svg/omc-logo.svg';
+        
 
         // window events
         window.addEventListener('resize', this.debounce(() => {
@@ -65,6 +83,7 @@ let Game = class Game {
         // manipulate game element
         this._container.style.width = `${this._width}px`;
         this._container.style.height = `${this._height}px`;
+
     }
 
     debounce(fn, wait = 200) {

@@ -2,7 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
-    gulpUtil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
+    gutil = require('gulp-util'),
     del = require('del'),
     sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),
@@ -27,16 +28,15 @@ module.exports = function() {
         del.sync([destPath + '/**/*[.js, .js.map]']);
 
         gulp.src(srcFiles)
+            .pipe(plumber(function(error) {
+                gutil.log(error.message);
+                this.emit('end');
+            }))
             .pipe(sourcemaps.init())
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-stylish'))
-            .pipe(babel({
-                presets: ['latest'],
-                plugins: ['transform-es2015-template-literals']
-            }))
-            .pipe(uglify({ 
-                mangle: false 
-            }).on('error', gulpUtil.log))
+            .pipe(babel({ presets: ['latest'] }))
+            .pipe(uglify({ mangle: false }))
             .pipe(concat(fileName + '.js'))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(destPath))
