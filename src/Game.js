@@ -53,7 +53,10 @@ let Game = class Game {
         // window events
         window.addEventListener('resize', this.debounce(() => {
             this.resize();
-        }));
+        }), false);
+        window.addEventListener('orientationchange', this.debounce(() => {
+            this.resize();
+        }), false);
     }
 
     setScale() {
