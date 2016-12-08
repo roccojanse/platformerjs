@@ -1,7 +1,8 @@
+/* globals AssetManager, Renderer */
 /* exported Game */
 'use strict';
 
-class Game {
+let Game = class Game {
 
     constructor() {
 
@@ -79,4 +80,4 @@ class Game {
         this.setScale();
         console.log('RESIZE!');
     }
-}
+};

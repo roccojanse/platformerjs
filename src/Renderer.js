@@ -7,6 +7,8 @@ class Renderer {
 
         this._objects = new Map();
 
+        console.log(Game.AssetManager);
+
     }
 
     clearObjects() {
