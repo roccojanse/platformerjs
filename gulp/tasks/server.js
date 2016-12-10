@@ -27,15 +27,16 @@ module.exports = function() {
 
     gulp.task('server:reload', function(done) {
         browserSync.reload();
-        browserSync.emitter.on('reload', function() {
-            console.log('Server reloaded on ' + new Date().now());
+        browserSync.emitter.on('browser:reload', function() {
+            console.log('Server reloaded on ' + new Date().toLocaleString('nl-NL', 'Europe/Amsterdam'));
         });
         done();
     });
 
     gulp.task('server:stop', function(done) {
         browserSync.exit();
-        browserSync.emitter.on('exit', function () {
+        browserSync.emitter.on('service:exit', function () {
+            console.log('Server stopped.');
             done();
         });
     });

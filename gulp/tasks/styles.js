@@ -2,6 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
+    gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     del = require('del'),
     sass = require('gulp-sass'),
     sourcemaps = require('gulp-sourcemaps'),
@@ -21,10 +23,12 @@ module.exports = function() {
 
         // build
         gulp.src(srcPath + '/*.scss')
-            .pipe(sourcemaps.init())
-            .pipe(cssGlob({
-                extensions: ['.scss']
+            .pipe(plumber(function(error) {
+                gutil.log(error.message);
+                this.emit('end');
             }))
+            .pipe(sourcemaps.init())
+            .pipe(cssGlob({ extensions: ['.scss'] }))
             .pipe(sass({
                 outputStyle: 'expanded',
                 defaultEncoding: 'utf-8',
@@ -34,14 +38,9 @@ module.exports = function() {
                 cacheLocation: srcPath + '/.sass-cache',
                 precision: 4,
                 compass: false
-            }).on('error', sass.logError))
-            .pipe(autoprefixer({
-                browsers: ['> 5%', 'IE 11', 'last 3 version'], 
-                cascade: false
             }))
-            .pipe(cssNano({
-                zindex: false
-            }).on('error', sass.logError))
+            .pipe(autoprefixer({ browsers: ['> 5%', 'IE 11', 'last 3 version'], cascade: false }))
+            .pipe(cssNano({ zindex: false }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(destPath))
             .on('end', done);

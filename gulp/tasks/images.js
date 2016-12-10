@@ -2,7 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
-    del = require('del'),
+    gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     changed = require('gulp-changed'),
     imagemin = require('gulp-imagemin'),
     pngquant = require('imagemin-pngquant');
@@ -19,10 +20,11 @@ module.exports = function() {
     
     gulp.task('images:copy', function(done) {
 
-        // // cleanup first
-        // del.sync([destPath + '/**/*[.jpg,.png,.svg]']);
-
         gulp.src(srcFiles)
+            .pipe(plumber(function(error) {
+                gutil.log(error.message);
+                this.emit('end');
+            }))
             .pipe(changed(destPath))
             .pipe(imagemin({
                 progressive: true,

@@ -2,6 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
+    gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     del = require('del');
 
 module.exports = function() {
@@ -19,6 +21,10 @@ module.exports = function() {
         del.sync([destPath + '/**/*[.html]']);
 
         gulp.src(srcFiles)
+            .pipe(plumber(function(error) {
+                gutil.log(error.message);
+                this.emit('end');
+            }))
             .pipe(gulp.dest(destPath))
             .on('end', done);
     });

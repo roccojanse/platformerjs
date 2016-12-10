@@ -2,8 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
-    plumber = require('gulp-plumber'),
     gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     del = require('del'),
     sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),

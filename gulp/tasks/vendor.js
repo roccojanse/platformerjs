@@ -2,7 +2,8 @@
 
 var config = require('../config.js'),
     gulp = require('gulp'),
-    gulpUtil = require('gulp-util'),
+    gutil = require('gulp-util'),
+    plumber = require('gulp-plumber'),
     del = require('del'),
     rename = require('gulp-rename'),
     filter = require('gulp-filter'),
@@ -34,36 +35,34 @@ module.exports = function() {
 
             // build
             gulp.src(config.vendor[lib])
+                .pipe(plumber(function(error) {
+                    gutil.log(error.message);
+                    this.emit('end');
+                }))
                 .pipe(filterScripts)
                 .pipe(filterScriptsMin)
-                .pipe(uglify({ 
-                    mangle: false 
-                }).on('error', gulpUtil.log))
+                .pipe(uglify({ mangle: false }))
                 .pipe(filterScriptsMin.restore)
-                .pipe(concat(lib + '.js')
-                .on('error', gulpUtil.log))
+                .pipe(concat(lib + '.js'))
                 .pipe(strip())
                 .pipe(rename({ 
                     suffix: '.min' 
                 }))
                 .pipe(gulp.dest(destPath + '/js/vendor'));
 
-            gulp.src(config.vendor[lib])  
+            gulp.src(config.vendor[lib]) 
+                .pipe(plumber(function(error) {
+                    gutil.log(error.message);
+                    this.emit('end');
+                })) 
                 .pipe(filterStyles)
                 .pipe(filterStylesMin)
-                .pipe(cssnano({
-                    zindex: false
-                })
-                .on('error', gulpUtil.log))
+                .pipe(cssnano({ zindex: false }))
                 .pipe(filterStylesMin.restore)
-                .pipe(concat(lib + '.css')
-                .on('error', gulpUtil.log))
-                .pipe(rename({ 
-                    suffix: '.min' 
-                }))
+                .pipe(concat(lib + '.css'))
+                .pipe(rename({ suffix: '.min' }))
                 .pipe(gulp.dest(destPath + '/css/vendor'));
         }
-
         done();
     });
 };
