@@ -100,6 +100,5 @@ let Game = class Game {
     resize() {
 
         this.setScale();
-        console.log('RESIZE!');
     }
 };
