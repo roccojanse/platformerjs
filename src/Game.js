@@ -40,6 +40,27 @@ let Game = class Game {
         this._container.height = this._height;
         this.setScale();
 
+        var assets = [{
+            id: 'omc-logo',
+            path: '/assets/svg/omc-logo.svg',
+            type: 'svg'
+        },{
+            id: 'omc-logo2',
+            path: '/assets/svg/omc-logo.svg',
+            type: 'svg'
+        },{
+            id: 'omc-logo3',
+            path: '/assets/svg/omc-logo.svg',
+            type: 'svg'
+        },{
+            id: 'omc-logo4',
+            path: '/assets/svg/omc-logo.svg',
+            type: 'svg'
+        }];
+
+        Game.AssetManager.addAssets(assets);
+        console.log(Game.AssetManager.get('omc-logo4'));
+
         // tmp
         let ctx = this._container.getContext('2d');
         let img = new Image();
