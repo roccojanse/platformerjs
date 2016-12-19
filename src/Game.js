@@ -109,7 +109,7 @@ let Game = class Game {
         //Note: As we mention in summary, you should keep track of how large numTicks is.
         //If it is large, then either your game was asleep, or the machine cannot keep up.
         if (tFrame > nextTick) {
-            var timeSinceTick = tFrame - this._lastTick;
+            let timeSinceTick = tFrame - this._lastTick;
             numTicks = Math.floor(timeSinceTick / this._tickLength);
         }
 
