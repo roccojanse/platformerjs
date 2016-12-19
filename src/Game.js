@@ -1,4 +1,4 @@
-/* globals AssetManager, Renderer */
+/* globals AssetManager, Renderer, Main */
 /* exported Game */
 'use strict';
 
@@ -15,10 +15,6 @@ let Game = class Game {
 
         this._fps = 60;
 
-        this._lastTick = window.performance.now();
-        this._tickLength = 50;
-        this._lastRender = this._lastTick;
-
         this._gameState = {
             INIT: 1,
             MAINMENU: 2
@@ -27,12 +23,16 @@ let Game = class Game {
         this.init();
     }
 
+    /**
+     * Initializes game.
+     */
     init() {
 
         // init global asset and object managers
         //Game.EventEmitter = new EventEmitter();
         Game.AssetManager = new AssetManager();
         Game.Renderer = new Renderer();
+        Game.Main = new Main();
 
         // set game scale
         this._container.width = this._width;
@@ -91,51 +91,12 @@ let Game = class Game {
         }), false);
 
         // start mainLoop
-        this.main(window.performance.now());
+        Game.Main.loop(window.performance.now());
     }
 
     /**
-     * main game loop
-     * @param {DOMHighResTimestamp} tFrame Timestamp provided by requestAnimationFrame to accurately and precisely determine how much time elapsed since last run.
+     * Determines and sets current scalefactor.
      */
-    main(tFrame) {
-        Game.mainLoop = window.requestAnimationFrame(this.main.bind(this));
-        
-        let nextTick = this._lastTick + this._tickLength;
-        let numTicks = 0;      
-        
-        //If tFrame < nextTick then 0 ticks need to be updated (0 is default for numTicks).
-        //If tFrame = nextTick then 1 tick needs to be updated (and so forth).
-        //Note: As we mention in summary, you should keep track of how large numTicks is.
-        //If it is large, then either your game was asleep, or the machine cannot keep up.
-        if (tFrame > nextTick) {
-            let timeSinceTick = tFrame - this._lastTick;
-            numTicks = Math.floor(timeSinceTick / this._tickLength);
-        }
-
-        // queue updates
-        this.queueUpdates(numTicks);
-
-        // render frame
-        this.render(tFrame);   
-        this._lastRender = tFrame;
-    }
-
-    queueUpdates(numTicks) {
-        for(let i=0; i < numTicks; i++) {
-            this._lastTick = this._lastTick + this._tickLength; //Now lastTick is this tick.
-            this.update(this._lastTick);
-        }
-    }
-
-    render() {
-        console.log('render');
-    }
-
-    update() {
-        console.log('update');
-    }
-
     setScale() {
         
         // get current viewport width and height
@@ -166,7 +127,12 @@ let Game = class Game {
 
     }
 
-    debounce(fn, wait = 200) {
+    /**
+     * 'Debounces' events so they won't be triggered every event.
+     * @param {function} Fn Function to act as callback,
+     * @param {number} wait=200 delay to trigger events
+     */
+    debounce(fn, wait=200) {
         let timeout;
         return function () {
             clearTimeout(timeout);
@@ -174,8 +140,10 @@ let Game = class Game {
         };
     }
 
+    /**
+     * Resizes and rescales the game.
+     */
     resize() {
-
         this.setScale();
     }
 };

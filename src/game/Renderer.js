@@ -11,6 +11,10 @@ class Renderer {
 
     }
 
+    render(tFrame) {
+        console.log('render');
+    }
+
     clearObjects() {
         this._objects.clear();
     }
