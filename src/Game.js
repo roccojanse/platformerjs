@@ -14,12 +14,10 @@ let Game = class Game {
         this._scaleFactor = 1;
 
         this._fps = 60;
-        this._reqAnimId = null;
 
-        this._lastFrame = 0;
-        this._upcateCycleCount = 0;
-        this._renderCycleCount = 0;
-        this._physicsCycleCount = 0;
+        this._lastTick = window.performance.now();
+        this._tickLength = 50;
+        this._lastRender = this._lastTick;
 
         this._gameState = {
             INIT: 1,
@@ -32,6 +30,7 @@ let Game = class Game {
     init() {
 
         // init global asset and object managers
+        //Game.EventEmitter = new EventEmitter();
         Game.AssetManager = new AssetManager();
         Game.Renderer = new Renderer();
 
@@ -40,36 +39,48 @@ let Game = class Game {
         this._container.height = this._height;
         this.setScale();
 
-        var assets = [{
-            id: 'omc-logo',
-            path: '/assets/svg/omc-logo.svg',
-            type: 'svg'
-        },{
-            id: 'omc-logo2',
-            path: '/assets/svg/omc-logo.svg',
-            type: 'svg'
-        },{
-            id: 'omc-logo3',
-            path: '/assets/svg/omc-logo.svg',
-            type: 'svg'
-        },{
-            id: 'omc-logo4',
-            path: '/assets/svg/omc-logo.svg',
-            type: 'svg'
-        }];
+        // var assets = [{
+        //     id: 'omc-logo',
+        //     path: '/assets/svg/omc-logo.svg',
+        //     type: 'svg'
+        // },{
+        //     id: 'progressbar-base',
+        //     path: '/assets/svg/ui/pb-base.svg',
+        //     type: 'svg'
+        // },{
+        //     id: 'progressbar-bg',
+        //     path: '/assets/svg/ui/pb-bg.svg',
+        //     type: 'svg'
+        // },{
+        //     id: 'progressbar-bar',
+        //     path: '/assets/svg/ui/pb-bar.svg',
+        //     type: 'svg'
+        // }];
 
-        Game.AssetManager.addAssets(assets);
-        console.log(Game.AssetManager.get('omc-logo4'));
+        // // tmp
+        // let ctx = this._container.getContext('2d');
 
-        // tmp
-        let ctx = this._container.getContext('2d');
-        let img = new Image();
-
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0, 1280, 720);
-        };
-        img.src = '/assets/svg/omc-logo.svg';
+        // Game.AssetManager.addAssets(assets);
         
+        // Game.AssetManager.addEventListener('load', (progress) => {
+        //     console.log(`Started loading ${progress.total} assets on ` + new Date(progress.timestamp).toLocaleString('nl-NL', 'Europe/Amsterdam'));
+        // });
+
+        // Game.AssetManager.addEventListener('progress', (progress) => {
+        //     console.log(`Loading progress: ${progress.loaded}/${progress.total}, ${progress.errors} errors. ${(progress.loaded / progress.total) * 100}%.`);
+        // });
+
+        // Game.AssetManager.addEventListener('complete', (assets) => {
+        //     console.log(`Loading complete. ${assets.loaded}/${assets.total}(${assets.errors}). Completed on ` + new Date(assets.timestamp).toLocaleString('nl-NL', 'Europe/Amsterdam'));
+        //     let pbBase = Game.AssetManager.get('progressbar-base');
+        //     let pbBg = Game.AssetManager.get('progressbar-bg');
+        //     let pbBar = Game.AssetManager.get('progressbar-bar');
+        //     ctx.drawImage(pbBase.img, 0, 0, pbBase.width, pbBase.height);
+        //     ctx.drawImage(pbBg.img, 0, 0, pbBg.width, pbBg.height);
+        //     ctx.drawImage(pbBar.img, 0, 0, pbBar.width, pbBar.height);
+        // });
+
+        // Game.AssetManager.load();
 
         // window events
         window.addEventListener('resize', this.debounce(() => {
@@ -78,6 +89,51 @@ let Game = class Game {
         window.addEventListener('orientationchange', this.debounce(() => {
             this.resize();
         }), false);
+
+        // start mainLoop
+        this.main(window.performance.now());
+    }
+
+    /**
+     * main game loop
+     * @param {DOMHighResTimestamp} tFrame Timestamp provided by requestAnimationFrame to accurately and precisely determine how much time elapsed since last run.
+     */
+    main(tFrame) {
+        Game.mainLoop = window.requestAnimationFrame(this.main.bind(this));
+        
+        let nextTick = this._lastTick + this._tickLength;
+        let numTicks = 0;      
+        
+        //If tFrame < nextTick then 0 ticks need to be updated (0 is default for numTicks).
+        //If tFrame = nextTick then 1 tick needs to be updated (and so forth).
+        //Note: As we mention in summary, you should keep track of how large numTicks is.
+        //If it is large, then either your game was asleep, or the machine cannot keep up.
+        if (tFrame > nextTick) {
+            var timeSinceTick = tFrame - this._lastTick;
+            numTicks = Math.floor(timeSinceTick / this._tickLength);
+        }
+
+        // queue updates
+        this.queueUpdates(numTicks);
+
+        // render frame
+        this.render(tFrame);   
+        this._lastRender = tFrame;
+    }
+
+    queueUpdates(numTicks) {
+        for(let i=0; i < numTicks; i++) {
+            this._lastTick = this._lastTick + this._tickLength; //Now lastTick is this tick.
+            this.update(this._lastTick);
+        }
+    }
+
+    render() {
+        console.log('render');
+    }
+
+    update() {
+        console.log('update');
     }
 
     setScale() {

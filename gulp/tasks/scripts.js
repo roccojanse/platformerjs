@@ -18,6 +18,7 @@ module.exports = function() {
         destPath = config.destPath + '/js',
 
         srcFiles = [
+            srcPath + '/game/EventEmitter.js',
             srcPath + '/**/!(Game).js',
             srcPath + '/Game.js'
         ];
